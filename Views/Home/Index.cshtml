@@ -1,6 +1,4 @@
-﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@using System.Data;
-@model DataTable
+﻿@model IndexViewModel
 
 @{
     ViewData["Title"] = "Home Page";
@@ -12,21 +10,46 @@
 </form>
 @if (Model != null)
 {
-    <hr />
-    <table border="0" cellpadding="0" cellspacing="0">
-        <tr>
-            @foreach (DataColumn dc in Model.Columns)
+    <h2>Imported data:</h2>
+    <br />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Employee ID</th>
+                <th>Project ID</th>
+                <th>Date From</th>
+                <th>Date To</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Employee e in Model.Employees)
             {
-                <th>@dc.ColumnName</th>
+                <tr>
+                    <td>@e.ID</td>
+                    <td>@e.ProjectID</td>
+                    <td>@e.DateFrom.ToShortDateString()</td>
+                    <td>@e.DateTo.ToShortDateString()</td>
+                </tr>
             }
+        </tbody>
+    </table>
+
+    <br />
+    <h2>Best coworkers:</h2>
+    <table class="table">
+        <tr>
+            <th>First Employee ID</th>
+            <th>Second Employee ID</th>
+            <th>Project ID</th>
+            <th>Worked Days</th>
         </tr>
-        @foreach (DataRow dr in Model.Rows)
+        @foreach (EmployeesWorkedTogether e in Model.EmployeesWorkedTogethers)
         {
             <tr>
-                @foreach (DataColumn dc in Model.Columns)
-                {
-                    <td>@dr[dc.ColumnName]</td>
-                }
+                <td>@e.FirstEmployeeID</td>
+                <td>@e.SecondEmployeeID</td>
+                <td>@e.ProjectID</td>
+                <td>@e.WorkedDays</td>
             </tr>
         }
     </table>

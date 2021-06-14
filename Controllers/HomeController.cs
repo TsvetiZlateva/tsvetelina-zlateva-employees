@@ -2,14 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using tsvetelina_zlateva_employees.Models;
+using tsvetelina_zlateva_employees.Services;
 
 namespace tsvetelina_zlateva_employees.Controllers
 {
@@ -17,11 +15,15 @@ namespace tsvetelina_zlateva_employees.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IHostingEnvironment Environment;
+        private readonly IEmployeesService employeesService;
 
-        public HomeController(ILogger<HomeController> logger, IHostingEnvironment _environment)
+        public HomeController(ILogger<HomeController> logger,
+            IHostingEnvironment _environment,
+            IEmployeesService employeesService)
         {
             this._logger = logger;
             this.Environment = _environment;
+            this.employeesService = employeesService;
         }
 
         public IActionResult Index()
@@ -35,6 +37,7 @@ namespace tsvetelina_zlateva_employees.Controllers
             if (postedFile != null)
             {
                 string path = Path.Combine(this.Environment.WebRootPath, "Uploads");
+
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
@@ -42,13 +45,16 @@ namespace tsvetelina_zlateva_employees.Controllers
 
                 string fileName = Path.GetFileName(postedFile.FileName);
                 string filePath = Path.Combine(path, fileName);
+
                 using (FileStream stream = new FileStream(filePath, FileMode.Create))
                 {
                     postedFile.CopyTo(stream);
                 }
+
                 string csvData = System.IO.File.ReadAllText(filePath);
                 DataTable dt = new DataTable();
                 bool firstRow = true;
+
                 foreach (string row in csvData.Split('\n'))
                 {
                     if (!string.IsNullOrEmpty(row))
@@ -76,15 +82,21 @@ namespace tsvetelina_zlateva_employees.Controllers
                         }
                     }
                 }
-      
-                return View(dt);
+
+                List<Employee> employees = employeesService.GetEmployeesFromDatatable(dt);
+                List<EmployeesWorkedTogether> employeesWorkedTogether = employeesService.GetEmployeesWorkedTogether(employees);
+
+                // TODO group employees and projects
+
+                IndexViewModel viewModel = new IndexViewModel
+                {
+                    Employees = employees,
+                    EmployeesWorkedTogethers = employeesWorkedTogether
+                };
+
+                return View(viewModel);
             }
 
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
             return View();
         }
 
