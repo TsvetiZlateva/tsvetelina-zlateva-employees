@@ -32,7 +32,7 @@ namespace tsvetelina_zlateva_employees.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(IFormFile postedFile)
+        public IActionResult Index(IFormFile postedFile, string dateFormat)
         {
             if (postedFile != null)
             {
@@ -93,6 +93,8 @@ namespace tsvetelina_zlateva_employees.Controllers
                     Employees = employees,
                     EmployeesWorkedTogethers = employeesWorkedTogether
                 };
+
+                ViewData["dateFormat"] = dateFormat;
 
                 return View(viewModel);
             }

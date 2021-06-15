@@ -6,6 +6,13 @@
 
 <form asp-controller="Home" asp-action="Index" method="post" enctype="multipart/form-data">
     <input type="file" name="postedFile" />
+    <select name="dateFormat">
+        <option value="">Select date format</option>
+        <option value="dd-MM-yyyy">dd-MM-yyyy</option>
+        <option value="dd/MM/yyyy">dd/MM/yyyy</option>
+        <option value="dd.MM.yyyy">dd.MM.yyyy</option>
+        <option value="dd MMMM yyyy">dd MMMM yyyy</option>
+    </select>
     <input type="submit" value="Import" />
 </form>
 @if (Model != null)
@@ -27,8 +34,8 @@
                 <tr>
                     <td>@e.ID</td>
                     <td>@e.ProjectID</td>
-                    <td>@e.DateFrom.ToShortDateString()</td>
-                    <td>@e.DateTo.ToShortDateString()</td>
+                    <td>@e.DateFrom.ToString(ViewData["dateFormat"].ToString())</td>
+                    <td>@e.DateTo.ToString(ViewData["dateFormat"].ToString())</td>
                 </tr>
             }
         </tbody>

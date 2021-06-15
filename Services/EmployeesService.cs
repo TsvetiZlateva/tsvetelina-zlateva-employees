@@ -21,14 +21,28 @@ namespace tsvetelina_zlateva_employees.Services
 
             foreach (DataRow dataRow in dt.Rows)
             {
+                string[] dateFromParts = dataRow.ItemArray[2]
+                    .ToString()
+                    .Split('-', StringSplitOptions.RemoveEmptyEntries);
+                int dateFromYear = int.Parse(dateFromParts[2]);
+                int dateFromMonth = int.Parse(dateFromParts[1]);
+                int dateFromDay = int.Parse(dateFromParts[0]);
+
                 Employee employee = new Employee();
                 employee.ID = Convert.ToInt32(dataRow.ItemArray[0]);
-                employee.ProjectID = Convert.ToInt32(dataRow.ItemArray[1]);
-                employee.DateFrom = DateTime.ParseExact(dataRow.ItemArray[2].ToString(), "M/d/yyyy", CultureInfo.InvariantCulture);
+                employee.ProjectID = Convert.ToInt32(dataRow.ItemArray[1]);               
+                employee.DateFrom = new DateTime(dateFromYear, dateFromMonth, dateFromDay);
 
                 if (dataRow.ItemArray[3].ToString() != "NULL")
                 {
-                    employee.DateTo = DateTime.ParseExact(dataRow.ItemArray[3].ToString(), "M/d/yyyy", CultureInfo.InvariantCulture);
+                    string[] dateToParts = dataRow.ItemArray[3]
+                        .ToString()
+                        .Split('-', StringSplitOptions.RemoveEmptyEntries);
+                    int dateToYear = int.Parse(dateToParts[2]);
+                    int dateToMonth = int.Parse(dateToParts[1]);
+                    int dateToDay = int.Parse(dateToParts[0]);
+                                        
+                    employee.DateTo = new DateTime(dateToYear, dateToMonth, dateToDay);
                 }
                 else
                 {
