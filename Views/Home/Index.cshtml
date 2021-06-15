@@ -51,13 +51,13 @@
             <th>Project ID</th>
             <th>Worked Days</th>
         </tr>
-        @foreach (EmployeesWorkedTogether e in Model.EmployeesWorkedTogethers)
+        @foreach (var bc in Model.BestCoworkers)
         {
             <tr>
-                <td>@e.FirstEmployeeID</td>
-                <td>@e.SecondEmployeeID</td>
-                <td>@e.ProjectID</td>
-                <td>@e.WorkedDays</td>
+                <td>@bc.FirstEmployeeID</td>
+                <td>@bc.SecondEmployeeID</td>
+                <td>@String.Join(',', bc.Projects)</td>
+                <td>@bc.WorkedDays</td>
             </tr>
         }
     </table>

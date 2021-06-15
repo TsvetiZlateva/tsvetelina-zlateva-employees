@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using tsvetelina_zlateva_employees.Models;
 using tsvetelina_zlateva_employees.Services;
 
@@ -88,10 +89,22 @@ namespace tsvetelina_zlateva_employees.Controllers
 
                 // TODO group employees and projects
 
+                var bestCoworkers = employeesWorkedTogether
+                    .GroupBy(gr => new { gr.FirstEmployeeID, gr.SecondEmployeeID})
+                    .Select(g => new BestCoworkers()
+                    {
+                        FirstEmployeeID = g.Key.FirstEmployeeID,
+                        SecondEmployeeID = g.Key.SecondEmployeeID,
+                        WorkedDays = g.Sum(s => s.WorkedDays), 
+                        Projects = g.Select(s => s.ProjectID).ToList() 
+                     })
+                    .OrderByDescending(bc => bc.WorkedDays)
+                    .ToList();
+
                 IndexViewModel viewModel = new IndexViewModel
                 {
                     Employees = employees,
-                    EmployeesWorkedTogethers = employeesWorkedTogether
+                    BestCoworkers = bestCoworkers
                 };
 
                 ViewData["dateFormat"] = dateFormat;
